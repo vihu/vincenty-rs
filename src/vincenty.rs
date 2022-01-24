@@ -1,4 +1,9 @@
+use anyhow::Result;
+use h3ron::{FromH3Index, H3Cell, ToCoordinate};
 use serde::Serialize;
+use std::convert::TryFrom;
+use std::fmt;
+use std::fmt::Display;
 use std::str::FromStr;
 
 const RADIUS_AT_EQUATOR: f64 = 6_378_137.0;
@@ -8,15 +13,39 @@ const MAX_ITERATIONS: u32 = 200;
 const CONVERGENCE_THRESHOLD: f64 = 0.000_000_000_001;
 const PRECISION: i32 = 6;
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GeoCoordinate {
     lat: f64,
     lng: f64,
 }
 
 impl GeoCoordinate {
-    fn new(lat: f64, lng: f64) -> Self {
-        GeoCoordinate { lat, lng }
+    pub fn new(lat: f64, lng: f64) -> Self {
+        Self { lat, lng }
+    }
+}
+
+impl Display for GeoCoordinate {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}, {}", self.lat, self.lng)
+    }
+}
+
+impl TryFrom<u64> for GeoCoordinate {
+    type Error = &'static str;
+
+    fn try_from(index: u64) -> Result<Self, Self::Error> {
+        let c = H3Cell::from_h3index(index).to_coordinate();
+        Ok(Self { lat: c.x, lng: c.y })
+    }
+}
+
+impl TryFrom<H3Cell> for GeoCoordinate {
+    type Error = &'static str;
+
+    fn try_from(cell: H3Cell) -> Result<Self, Self::Error> {
+        let c = cell.to_coordinate();
+        Ok(Self { lat: c.x, lng: c.y })
     }
 }
 
@@ -24,12 +53,20 @@ impl FromStr for GeoCoordinate {
     type Err = std::string::ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (src, dst) = s.split_once(",").expect("Incorrect format!");
+        match H3Cell::from_str(s) {
+            Ok(cell) => Ok(GeoCoordinate::try_from(cell).unwrap()),
+            Err(_) => match s.parse::<u64>() {
+                Ok(h3index) => Ok(GeoCoordinate::try_from(h3index).unwrap()),
+                Err(_) => {
+                    let (src, dst) = s.trim().split_once(",").expect("Incorrect format!");
 
-        Ok(GeoCoordinate {
-            lat: src.trim().parse().unwrap(),
-            lng: dst.trim().parse().unwrap(),
-        })
+                    Ok(GeoCoordinate {
+                        lat: src.trim().parse().unwrap(),
+                        lng: dst.trim().parse().unwrap(),
+                    })
+                }
+            },
+        }
     }
 }
 
@@ -172,5 +209,12 @@ mod tests {
             ),
             Some(0.002716)
         )
+    }
+
+    #[test]
+    fn h3() {
+        let c1 = GeoCoordinate::from_str("8826085a4dfffff").unwrap();
+        let c2 = GeoCoordinate::from_str("8826085a4dfffff").unwrap();
+        assert_eq!(Some(0.0), distance(&c1, &c2))
     }
 }
