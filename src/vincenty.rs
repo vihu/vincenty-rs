@@ -36,7 +36,7 @@ impl TryFrom<u64> for GeoCoordinate {
 
     fn try_from(index: u64) -> Result<Self, Self::Error> {
         let c = H3Cell::from_h3index(index).to_coordinate();
-        Ok(Self { lat: c.x, lng: c.y })
+        Ok(Self { lat: c.y, lng: c.x })
     }
 }
 
@@ -45,7 +45,7 @@ impl TryFrom<H3Cell> for GeoCoordinate {
 
     fn try_from(cell: H3Cell) -> Result<Self, Self::Error> {
         let c = cell.to_coordinate();
-        Ok(Self { lat: c.x, lng: c.y })
+        Ok(Self { lat: c.y, lng: c.x })
     }
 }
 
