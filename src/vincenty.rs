@@ -19,6 +19,7 @@ pub struct GeoCoordinate {
     lng: f64,
 }
 
+#[allow(dead_code)]
 impl GeoCoordinate {
     pub fn new(lat: f64, lng: f64) -> Self {
         Self { lat, lng }

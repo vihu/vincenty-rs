@@ -1,7 +1,15 @@
 [package]
 name = "vincenty-rs"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
+description = "Expose API for calculating distance using vincenty formulae"
+repository = "https://github.com/vihu/vincenty-rs"
+homepage = "https://github.com/vihu/vincenty-rs"
+readme = "README.md"
+keywords = ["vincenty", "geolocation", "geolib", "tide"]
+categories = ["api", "geolocation"]
+license = "MIT OR Apache-2.0"
+authors = ["Rahul Garg <rg@vihu.dev>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
