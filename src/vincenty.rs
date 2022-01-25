@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use h3ron::{FromH3Index, H3Cell, ToCoordinate};
 use serde::Serialize;
 use std::convert::TryFrom;
@@ -71,7 +71,7 @@ impl FromStr for GeoCoordinate {
     }
 }
 
-pub fn distance(c1: &GeoCoordinate, c2: &GeoCoordinate) -> Option<f64> {
+pub fn distance(c1: &GeoCoordinate, c2: &GeoCoordinate) -> Result<f64> {
     let u1 = f64::atan((1.0 - FLATTENING_ELIPSOID) * f64::tan(f64::to_radians(c1.lat)));
     let u2 = f64::atan((1.0 - FLATTENING_ELIPSOID) * f64::tan(f64::to_radians(c2.lat)));
     let init_lambda = f64::to_radians(c2.lng - c1.lng);
@@ -92,7 +92,7 @@ fn approximate(
     cos_u1: f64,
     sin_u2: f64,
     cos_u2: f64,
-) -> Option<f64> {
+) -> Result<f64> {
     for _ in 0..MAX_ITERATIONS {
         let sin_lambda = f64::sin(lambda);
         let cos_lambda = f64::cos(lambda);
@@ -102,7 +102,7 @@ fn approximate(
         );
 
         if sin_sigma == 0.0 {
-            return Some(0.0);
+            return Ok(0.0);
         }
 
         let cos_sigma = sin_u1.mul_add(sin_u2, cos_u1 * cos_u2 * cos_lambda);
@@ -134,7 +134,7 @@ fn approximate(
 
         if f64::abs(new_lambda - lambda) < CONVERGENCE_THRESHOLD {
             // successful
-            return Some(round(
+            return Ok(round(
                 evaluate(cos_sqalpha, sin_sigma, cos2_sigma_m, cos_sigma, sigma),
                 PRECISION,
             ));
@@ -143,7 +143,7 @@ fn approximate(
         lambda = new_lambda;
     }
 
-    None
+    bail!("boom")
 }
 
 fn evaluate(

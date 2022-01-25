@@ -1,8 +1,10 @@
 mod vincenty;
 
-use tide::prelude::*;
+use tide::{prelude::*, Response};
 use std::str::FromStr;
 use vincenty::{GeoCoordinate, distance};
+use http_types::{headers::HeaderValue, StatusCode, Body, convert::json};
+use tide::security::{CorsMiddleware, Origin};
 
 #[derive(Deserialize, Debug)]
 #[serde(default)]
@@ -24,11 +26,27 @@ impl Default for Query {
 async fn main() -> tide::Result<()> {
     let mut app = tide::new();
 
-    app.at("/distance").post(|req: tide::Request<()>| async move {
+    let cors = CorsMiddleware::new()
+        .allow_methods("POST".parse::<HeaderValue>().unwrap())
+        .allow_origin(Origin::from("*"))
+        .allow_credentials(false);
+
+    app.at("/distance")
+        .with(cors)
+        .post(|req: tide::Request<()>| async move {
         let q: Query = req.query()?;
         let c1: GeoCoordinate = GeoCoordinate::from_str(&q.src)?;
         let c2: GeoCoordinate = GeoCoordinate::from_str(&q.dst)?;
-        Ok(json!({"data": {"src": c1, "dst": c2, "distance": distance(&c1, &c2)}}))
+        let distance = distance(&c1, &c2)?;
+        let json = json!({"data": {"src": c1, "dst": c2, "distance": distance}});
+
+        let resp =
+            Response::builder(StatusCode::Ok)
+            .content_type("application/json")
+            .body(Body::from_json(&json)?)
+            .build();
+
+        Ok(resp)
     });
 
     app.listen("localhost:5000").await?;
