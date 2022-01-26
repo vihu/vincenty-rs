@@ -21,7 +21,7 @@ Start the [tide](https://crates.io/crates/tide) server with `cargo run --release
 - With lat,lng as `src` and `dst`:
 
 ```shell
-$ http POST http://localhost:5000/distance\?src\="42.3541165,-71.0693514"\&dst\="40.7791472, -73.9680804" --body
+$ http GET http://localhost:5000/distance\?src\="42.3541165,-71.0693514"\&dst\="40.7791472, -73.9680804" --body
 {
     "data": {
         "distance": 298.396186,
@@ -40,7 +40,7 @@ $ http POST http://localhost:5000/distance\?src\="42.3541165,-71.0693514"\&dst\=
 - With h3 string indices as `src` and `dst`:
 
 ```shell
-$ http POST http://localhost:5000/distance\?src\="8c2a306638701ff"\&dst\="8c2a100894435ff" --body
+$ http GET http://localhost:5000/distance\?src\="8c2a306638701ff"\&dst\="8c2a100894435ff" --body
 {
     "data": {
         "distance": 298.394459,
@@ -59,7 +59,7 @@ $ http POST http://localhost:5000/distance\?src\="8c2a306638701ff"\&dst\="8c2a10
 - With h3 `u64` indices as `src` and `dst`:
 
 ```shell
-$ http POST http://localhost:5000/distance\?src\=631246145620214271\&dst\=631243921460311551 --body
+$ http GET http://localhost:5000/distance\?src\=631246145620214271\&dst\=631243921460311551 --body
 {
     "data": {
         "distance": 298.394459,
@@ -78,7 +78,7 @@ $ http POST http://localhost:5000/distance\?src\=631246145620214271\&dst\=631243
 - With a mix of h3 string and h3 `u64`:
 
 ```shell
-$ http POST http://localhost:5000/distance\?src\="8c2a306638701ff"\&dst\=631243921460311551 --body
+$ http GET http://localhost:5000/distance\?src\="8c2a306638701ff"\&dst\=631243921460311551 --body
 {
     "data": {
         "distance": 298.394459,
@@ -97,7 +97,7 @@ $ http POST http://localhost:5000/distance\?src\="8c2a306638701ff"\&dst\=6312439
 - With a mix of h3 `u64` and lat,lng:
 
 ```shell
-$ http POST http://localhost:5000/distance\?src\="42.3541165,-71.0693514"\&dst\=631243921460311551 --body
+$ http GET http://localhost:5000/distance\?src\="42.3541165,-71.0693514"\&dst\=631243921460311551 --body
 {
     "data": {
         "distance": 298.398222,
