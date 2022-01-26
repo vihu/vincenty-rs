@@ -1,6 +1,6 @@
 [package]
 name = "vincenty-rs"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 description = "Expose API for calculating distance using vincenty formulae"
 repository = "https://github.com/vihu/vincenty-rs"
