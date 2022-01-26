@@ -27,13 +27,13 @@ async fn main() -> tide::Result<()> {
     let mut app = tide::new();
 
     let cors = CorsMiddleware::new()
-        .allow_methods("POST".parse::<HeaderValue>().unwrap())
+        .allow_methods("GET".parse::<HeaderValue>().unwrap())
         .allow_origin(Origin::from("*"))
         .allow_credentials(false);
 
     app.at("/distance")
         .with(cors)
-        .post(|req: tide::Request<()>| async move {
+        .get(|req: tide::Request<()>| async move {
         let q: Query = req.query()?;
         let c1: GeoCoordinate = GeoCoordinate::from_str(&q.src)?;
         let c2: GeoCoordinate = GeoCoordinate::from_str(&q.dst)?;
