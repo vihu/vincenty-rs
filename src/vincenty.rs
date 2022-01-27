@@ -185,8 +185,8 @@ mod tests {
     #[test]
     fn identity() {
         assert_eq!(
-            distance(&GeoCoordinate::new(0.0, 0.0), &GeoCoordinate::new(0.0, 0.0)),
-            Some(0.0)
+            distance(&GeoCoordinate::new(0.0, 0.0), &GeoCoordinate::new(0.0, 0.0)).unwrap(),
+            0.0
         );
     }
 
@@ -196,8 +196,9 @@ mod tests {
             distance(
                 &GeoCoordinate::new(42.3541165, -71.0693514),
                 &GeoCoordinate::new(40.7791472, -73.9680804)
-            ),
-            Some(298.396186)
+            )
+            .unwrap(),
+            298.396186
         )
     }
 
@@ -207,8 +208,9 @@ mod tests {
             distance(
                 &GeoCoordinate::new(39.152501, -84.412977),
                 &GeoCoordinate::new(39.152505, -84.412946)
-            ),
-            Some(0.002716)
+            )
+            .unwrap(),
+            0.002716
         )
     }
 
@@ -216,6 +218,6 @@ mod tests {
     fn h3() {
         let c1 = GeoCoordinate::from_str("8826085a4dfffff").unwrap();
         let c2 = GeoCoordinate::from_str("8826085a4dfffff").unwrap();
-        assert_eq!(Some(0.0), distance(&c1, &c2))
+        assert_eq!(0.0, distance(&c1, &c2).unwrap())
     }
 }
