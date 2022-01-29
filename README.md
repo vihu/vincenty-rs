@@ -10,6 +10,8 @@ Notably, it allows you to input `src` and `dst` as query parameters, where eithe
 2. [H3](https://github.com/uber/h3) indices as `String`
 3. [H3](https://github.com/uber/h3) indices as `u64`
 
+An instance of this API with front-end written in [yew](https://crates.io/crates/yew) is available at [vincenty.vihu.dev](https://vincenty.vihu.dev)
+
 Check the examples for more usage information.
 
 ### Usage
